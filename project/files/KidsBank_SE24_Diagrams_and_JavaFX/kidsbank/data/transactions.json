@@ -1,0 +1,47 @@
+[
+  {
+    "dateTime": "2026-04-13T11:32:21.004522513",
+    "accountId": "c2b84284-c658-4bc4-abe9-6975f3c298c0",
+    "amount": 10,
+    "description": "Task Reward: Soz yodla",
+    "balanceAfter": 10,
+    "type": "TASK_REWARD",
+    "transactionId": "f41bb734-198c-45f5-8dee-8249bdbddaf0"
+  },
+  {
+    "dateTime": "2026-04-13T11:32:39.454093380",
+    "accountId": "c2b84284-c658-4bc4-abe9-6975f3c298c0",
+    "amount": 5,
+    "description": "Withdrawal",
+    "balanceAfter": 5,
+    "type": "WITHDRAWAL",
+    "transactionId": "3ad47db1-2cce-44fe-b46d-65b9b3130ea9"
+  },
+  {
+    "dateTime": "2026-04-16T21:05:21.603578267",
+    "accountId": "afe62b67-a70f-4b8e-a508-9e073b46f21d",
+    "amount": 100,
+    "description": "For one month",
+    "balanceAfter": 100,
+    "type": "DEPOSIT",
+    "transactionId": "e71d6563-3576-452c-a969-cb2aa17c85c2"
+  },
+  {
+    "dateTime": "2026-04-16T21:06:02.099428297",
+    "accountId": "afe62b67-a70f-4b8e-a508-9e073b46f21d",
+    "amount": 10,
+    "description": "Savings: New Sneakers",
+    "balanceAfter": 90,
+    "type": "SAVINGS_TRANSFER",
+    "transactionId": "7cd93b69-bf76-4b81-ad64-56b1a58aa0d5"
+  },
+  {
+    "dateTime": "2026-04-16T21:06:51.145894794",
+    "accountId": "afe62b67-a70f-4b8e-a508-9e073b46f21d",
+    "amount": 10,
+    "description": "Savings: New Headphones",
+    "balanceAfter": 80,
+    "type": "SAVINGS_TRANSFER",
+    "transactionId": "ea23b785-2cf8-405c-816d-b28d02cecada"
+  }
+]

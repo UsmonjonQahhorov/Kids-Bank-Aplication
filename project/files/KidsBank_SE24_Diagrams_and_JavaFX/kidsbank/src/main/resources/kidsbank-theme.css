@@ -1,0 +1,54 @@
+/* KidsBank — readable text on pale blue pages (fixes GTK / high-contrast quirks) */
+
+.root {
+    -fx-font-family: "Arial", "Liberation Sans", "DejaVu Sans", sans-serif;
+}
+
+/* Main app pages */
+.kidsbank-page {
+    -fx-background-color: #EBF3FB;
+}
+
+/*
+ * ScrollPane viewport must match page background; some platforms leave it
+ * transparent so inherited -fx-text-base-color becomes unreadable (e.g. white on #EBF3FB).
+ */
+.kidsbank-scroll {
+    -fx-background-color: #EBF3FB;
+    -fx-background: #EBF3FB;
+}
+.kidsbank-scroll > .viewport {
+    -fx-background-color: #EBF3FB;
+    -fx-text-base-color: #0E2847;
+}
+
+/* Primary content column inside scroll — default label text stays dark */
+.kidsbank-body {
+    -fx-background-color: #EBF3FB;
+    -fx-text-base-color: #0E2847;
+}
+
+/* Transaction filter strip */
+.kidsbank-filter-row {
+    -fx-background-color: #E3EEF8;
+    -fx-text-base-color: #0E2847;
+}
+
+/* Progress bar: visible track on light UI */
+.kidsbank-progress > .track {
+    -fx-background-color: #B8C9DB;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+.kidsbank-progress > .bar {
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+
+/* Alerts / dialogs — dark body text on light panel */
+.dialog-pane {
+    -fx-background-color: #F4F7FB;
+}
+.dialog-pane .label {
+    -fx-text-fill: #0E2847;
+}

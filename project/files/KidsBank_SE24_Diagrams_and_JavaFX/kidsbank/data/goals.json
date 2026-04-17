@@ -1,0 +1,20 @@
+[
+  {
+    "accountId": "afe62b67-a70f-4b8e-a508-9e073b46f21d",
+    "goalId": "bd947d28-0005-4705-b475-483c9e413331",
+    "targetAmount": 100,
+    "targetDate": "2026-06-01",
+    "goalName": "New Sneakers",
+    "completed": false,
+    "savedAmount": 10
+  },
+  {
+    "accountId": "afe62b67-a70f-4b8e-a508-9e073b46f21d",
+    "goalId": "3812fed3-d01d-4b43-8431-28628d721786",
+    "targetAmount": 40,
+    "targetDate": "2027-04-14",
+    "goalName": "New Headphones",
+    "completed": false,
+    "savedAmount": 10
+  }
+]
