@@ -22,6 +22,12 @@ public class ChildDashboardScreen {
     private final SavingsGoalService goalService;
     private BorderPane root;
 
+    private Label balanceLbl;
+    private Label streakLbl;
+    private Label weeklyLimitLbl;
+    /** Primary account shown on dashboard (nullable). */
+    private String primaryAccountId;
+
     public ChildDashboardScreen(AuthService authService, AccountService accountService,
                                  TaskService taskService, SavingsGoalService goalService) {
         this.authService    = authService;
@@ -29,6 +35,70 @@ public class ChildDashboardScreen {
         this.taskService    = taskService;
         this.goalService    = goalService;
         buildUI();
+    }
+
+    /** Reload balance and related labels without leaving the dashboard. */
+    public void refreshBalance() {
+        if (balanceLbl == null) return;
+        try {
+            if (primaryAccountId == null) {
+                balanceLbl.setText("$0.00");
+                refreshWeeklyLimitNotice();
+                refreshStreakNotice();
+                return;
+            }
+            Account acc = accountService.getAccountById(primaryAccountId);
+            balanceLbl.setText("$" + String.format("%.2f", acc.getBalance()));
+            refreshWeeklyLimitNotice();
+            refreshStreakNotice();
+        } catch (Exception e) {
+            MainApp.showError(e.getMessage());
+        }
+    }
+
+    private void refreshStreakNotice() {
+        User u = authService.getCurrentUser();
+        if (streakLbl == null || u == null) return;
+        int streak = taskService.getCompletionStreak(u.getUserId());
+        if (streak >= 1) {
+            streakLbl.setText("🔥 " + streak + " day streak! Keep it up!");
+            streakLbl.setFont(Font.font("Arial", FontWeight.BOLD, 13));
+            streakLbl.setTextFill(Color.web("#D35400"));
+        } else {
+            streakLbl.setText("Complete a task today to start your streak!");
+            streakLbl.setFont(Font.font("Arial", FontPosture.ITALIC, 12));
+            streakLbl.setTextFill(Color.GRAY);
+        }
+    }
+
+    private void refreshWeeklyLimitNotice() {
+        if (weeklyLimitLbl == null || primaryAccountId == null) {
+            return;
+        }
+        try {
+            Account acc = accountService.getAccountById(primaryAccountId);
+            double limit = acc.getSpendingLimit();
+            if (limit <= 0) {
+                weeklyLimitLbl.setVisible(false);
+                weeklyLimitLbl.setManaged(false);
+                return;
+            }
+            double weeklySpent = accountService.getRollingWeekWithdrawalTotal(primaryAccountId);
+            if (weeklySpent > limit * 0.8) {
+                weeklyLimitLbl.setText(String.format(
+                        "⚠ You've spent $%.2f of your $%.2f weekly limit",
+                        weeklySpent, limit));
+                weeklyLimitLbl.setTextFill(Color.web("#D35400"));
+                weeklyLimitLbl.setVisible(true);
+                weeklyLimitLbl.setManaged(true);
+            } else {
+                weeklyLimitLbl.setVisible(false);
+                weeklyLimitLbl.setManaged(false);
+            }
+        } catch (Exception e) {
+            weeklyLimitLbl.setVisible(false);
+            weeklyLimitLbl.setManaged(false);
+        }
     }
 
     private void buildUI() {
@@ -39,6 +109,7 @@ public class ChildDashboardScreen {
         User user = authService.getCurrentUser();
         List<Account> accounts = accountService.getAccountsForUser(user.getUserId());
         Account account = accounts.isEmpty() ? null : accounts.get(0);
+        primaryAccountId = account != null ? account.getAccountId() : null;
 
         // ---- TOP HEADER ----
         HBox header = new HBox();
@@ -62,30 +133,6 @@ public class ChildDashboardScreen {
         center.getStyleClass().add("kidsbank-body");
         center.setPadding(new Insets(24));
         center.setAlignment(Pos.TOP_CENTER);
-
-        // Balance card
-        VBox balanceCard = new VBox(6);
-        balanceCard.setAlignment(Pos.CENTER);
-        balanceCard.setPadding(new Insets(18));
-        balanceCard.setStyle("-fx-background-color:white; -fx-background-radius:12; "
-                + "-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.1),10,0,0,2);");
-        balanceCard.setMaxWidth(400);
-
-        Label balanceTitleLbl = new Label("Current Balance");
-        balanceTitleLbl.setFont(Font.font("Arial", 13));
-        balanceTitleLbl.setTextFill(Color.GRAY);
-
-        double balance = account != null ? account.getBalance() : 0.0;
-        Label balanceLbl = new Label("$" + String.format("%.2f", balance));
-        balanceLbl.setFont(Font.font("Arial", FontWeight.BOLD, 36));
-        balanceLbl.setTextFill(Color.web("#1E8449"));
-
-        String accType = account != null ? account.getAccountType().getDisplayName() : "No Account";
-        Label accTypeLbl = new Label(accType);
-        accTypeLbl.setFont(Font.font("Arial", FontPosture.ITALIC, 11));
-        accTypeLbl.setTextFill(Color.GRAY);
-
-        balanceCard.getChildren().addAll(balanceTitleLbl, balanceLbl, accTypeLbl);
 
         // Pending tasks alert
         long pendingTasks = account == null ? 0 :
@@ -111,19 +158,51 @@ public class ChildDashboardScreen {
             }
         }
 
+        // Balance card
+        VBox balanceCard = new VBox(6);
+        balanceCard.setAlignment(Pos.CENTER);
+        balanceCard.setPadding(new Insets(18));
+        balanceCard.setStyle("-fx-background-color:white; -fx-background-radius:12; "
+                + "-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.1),10,0,0,2);");
+        balanceCard.setMaxWidth(400);
+
+        Label balanceTitleLbl = new Label("Current Balance");
+        balanceTitleLbl.setFont(Font.font("Arial", 13));
+        balanceTitleLbl.setTextFill(Color.GRAY);
+
+        double balance = account != null ? account.getBalance() : 0.0;
+        balanceLbl = new Label("$" + String.format("%.2f", balance));
+        balanceLbl.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+        balanceLbl.setTextFill(Color.web("#1E8449"));
+
+        String accType = account != null ? account.getAccountType().getDisplayName() : "No Account";
+        Label accTypeLbl = new Label(accType);
+        accTypeLbl.setFont(Font.font("Arial", FontPosture.ITALIC, 11));
+        accTypeLbl.setTextFill(Color.GRAY);
+
+        balanceCard.getChildren().addAll(balanceTitleLbl, balanceLbl, accTypeLbl);
+
+        streakLbl = new Label();
+        refreshStreakNotice();
+        streakLbl.setPadding(new Insets(4, 0, 0, 0));
+
+        weeklyLimitLbl = new Label();
+        weeklyLimitLbl.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+        refreshWeeklyLimitNotice();
+
         // Action buttons grid
         GridPane grid = new GridPane();
         grid.setHgap(14);
         grid.setVgap(14);
         grid.setAlignment(Pos.CENTER);
 
-        final String accId = account != null ? account.getAccountId() : null;
-        final String uid   = user.getUserId();
+        final String accId = primaryAccountId;
 
         Button withdrawBtn = actionBtn("💸 Withdraw", "#C0392B");
         Button tasksBtn    = actionBtn("📋 My Tasks",  "#1A5276");
         Button goalsBtn    = actionBtn("🎯 Savings Goals", "#1E8449");
         Button historyBtn  = actionBtn("📜 History",   "#6C3483");
+        Button analyticsBtn = actionBtn("📊 Analytics", "#1F4E79");
 
         withdrawBtn.setOnAction(e -> {
             if (accId == null) { MainApp.showError("No account found."); return; }
@@ -138,13 +217,19 @@ public class ChildDashboardScreen {
             if (accId == null) { MainApp.showError("No account found."); return; }
             MainApp.showTransactionHistory(accId, accType);
         });
+        analyticsBtn.setOnAction(e -> {
+            if (accId == null) { MainApp.showError("No account found."); return; }
+            MainApp.showAnalytics(accId);
+        });
 
         grid.add(withdrawBtn, 0, 0);
         grid.add(tasksBtn,    1, 0);
         grid.add(goalsBtn,    0, 1);
         grid.add(historyBtn,  1, 1);
+        grid.add(analyticsBtn, 0, 2);
+        GridPane.setColumnSpan(analyticsBtn, 2);
 
-        center.getChildren().addAll(balanceCard, grid);
+        center.getChildren().addAll(balanceCard, streakLbl, weeklyLimitLbl, grid);
         root.setCenter(center);
     }
 
@@ -191,9 +276,9 @@ public class ChildDashboardScreen {
         dialog.setHeaderText("How much would you like to withdraw?");
 
         Account account = accountService.getAccountById(accountId);
-        Label balanceLbl = new Label("Current balance: $" + String.format("%.2f", account.getBalance()));
-        balanceLbl.setFont(Font.font("Arial", 12));
-        balanceLbl.setTextFill(Color.web("#0E2847"));
+        Label dlgBalLbl = new Label("Current balance: $" + String.format("%.2f", account.getBalance()));
+        dlgBalLbl.setFont(Font.font("Arial", 12));
+        dlgBalLbl.setTextFill(Color.web("#0E2847"));
 
         TextField amountField = new TextField();
         amountField.setPromptText("Enter amount (e.g. 5.00)");
@@ -220,7 +305,7 @@ public class ChildDashboardScreen {
             }
         });
 
-        VBox content = new VBox(10, balanceLbl, amountField, previewLbl, errorLbl);
+        VBox content = new VBox(10, dlgBalLbl, amountField, previewLbl, errorLbl);
         content.setPadding(new Insets(10));
         dialog.getDialogPane().setContent(content);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
@@ -231,7 +316,7 @@ public class ChildDashboardScreen {
                     double amount = Double.parseDouble(amountField.getText().trim());
                     accountService.withdraw(accountId, amount);
                     MainApp.showInfo("Success", "Withdrawn $" + String.format("%.2f", amount) + " successfully!");
-                    MainApp.showChildDashboard(); // refresh
+                    refreshBalance();
                 } catch (Exception ex) {
                     MainApp.showError(ex.getMessage());
                 }

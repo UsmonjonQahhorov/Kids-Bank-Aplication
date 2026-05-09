@@ -15,6 +15,8 @@ public class Account {
     private AccountType accountType;
     private double balance;
     private LocalDate createdDate;
+    /** Weekly withdrawal cap (0 means no limit). */
+    private double spendingLimit;
 
     /** Constructor for creating a new account. */
     public Account(String userId, AccountType accountType) {
@@ -23,16 +25,18 @@ public class Account {
         this.accountType = accountType;
         this.balance = 0.0;
         this.createdDate = LocalDate.now();
+        this.spendingLimit = 0.0;
     }
 
     /** Constructor for loading from file. */
     public Account(String accountId, String userId, AccountType accountType,
-                   double balance, LocalDate createdDate) {
+                   double balance, LocalDate createdDate, double spendingLimit) {
         this.accountId = accountId;
         this.userId = userId;
         this.accountType = accountType;
         this.balance = balance;
         this.createdDate = createdDate;
+        this.spendingLimit = spendingLimit;
     }
 
     /**
@@ -62,6 +66,8 @@ public class Account {
     public double getBalance() { return balance; }
     public LocalDate getCreatedDate() { return createdDate; }
     public void setBalance(double balance) { this.balance = balance; }
+    public double getSpendingLimit() { return spendingLimit; }
+    public void setSpendingLimit(double spendingLimit) { this.spendingLimit = spendingLimit; }
 
     @Override
     public String toString() {

@@ -3,6 +3,7 @@
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/MainApp.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/TaskScreen.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/model/TaskStatus.java
+/home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/AnalyticsScreen.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/model/User.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/model/Transaction.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/LoginScreen.java
@@ -12,6 +13,7 @@
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/model/AccountType.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/ParentDashboardScreen.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/service/AuthService.java
+/home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/ChildProfileScreen.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/SavingsGoalScreen.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/model/TransactionType.java
 /home/usmonjon/Desktop/all/ise/project/files/KidsBank_SE24_Diagrams_and_JavaFX/kidsbank/src/main/java/com/kidsbank/storage/JsonStorage.java

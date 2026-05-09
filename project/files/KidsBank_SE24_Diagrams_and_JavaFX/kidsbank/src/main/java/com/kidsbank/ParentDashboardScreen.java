@@ -2,12 +2,14 @@ package com.kidsbank;
 
 import com.kidsbank.model.*;
 import com.kidsbank.service.*;
+import com.kidsbank.storage.JsonStorage;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,7 +68,7 @@ public class ParentDashboardScreen {
         summaryRow.setAlignment(Pos.CENTER);
 
         // Count children registered
-        List<User> allUsers = com.kidsbank.storage.JsonStorage.loadAllUsers();
+        List<User> allUsers = JsonStorage.loadAllUsers();
         long childCount = allUsers.stream().filter(u -> "child".equals(u.getRole())).count();
 
         long pendingApprovals = taskService.getTasksForParent(parent.getUserId()).stream()
@@ -89,20 +91,33 @@ public class ParentDashboardScreen {
         Button approveBtn   = actionBtn("✅ Approve Tasks",        "#D35400");
         Button historyBtn   = actionBtn("📜 View History",         "#1F4E79");
         Button registerBtn  = actionBtn("👤 Register Parent",      "#616A6B");
+        Button childrenBtn  = actionBtn("👧 View Children",       "#2471A3");
+        Button interestBtn  = actionBtn("💹 Apply Interest",       "#148F77");
+        Button limitBtn     = actionBtn("🔒 Set Spending Limit",   "#935116");
+        Button analyticsBtn = actionBtn("📊 Analytics",            "#6C3483");
 
         createAccBtn.setOnAction(e -> showCreateAccountDialog());
         depositBtn.setOnAction(e -> showDepositDialog());
         setTaskBtn.setOnAction(e -> MainApp.showTaskScreen(true));
         approveBtn.setOnAction(e -> MainApp.showTaskScreen(true));
         historyBtn.setOnAction(e -> showSelectAccountForHistory());
+        analyticsBtn.setOnAction(e -> showSelectChildForAnalytics());
         registerBtn.setOnAction(e -> showRegisterParentDialog());
+        childrenBtn.setOnAction(e -> MainApp.showChildProfiles());
+        interestBtn.setOnAction(e -> showApplyInterestDialog());
+        limitBtn.setOnAction(e -> showSpendingLimitDialog());
 
-        grid.add(createAccBtn, 0, 0);
-        grid.add(depositBtn,   1, 0);
-        grid.add(setTaskBtn,   0, 1);
-        grid.add(approveBtn,   1, 1);
-        grid.add(historyBtn,   0, 2);
-        grid.add(registerBtn,  1, 2);
+        grid.add(createAccBtn,   0, 0);
+        grid.add(depositBtn,    1, 0);
+        grid.add(setTaskBtn,    2, 0);
+        grid.add(approveBtn,   0, 1);
+        grid.add(historyBtn,   1, 1);
+        grid.add(analyticsBtn, 2, 1);
+        grid.add(registerBtn,  0, 2);
+        grid.add(childrenBtn,  1, 2);
+        grid.add(interestBtn,  2, 2);
+        grid.add(limitBtn,     0, 3);
+        GridPane.setColumnSpan(limitBtn, 3);
 
         center.getChildren().addAll(pageTitle, summaryRow, grid);
         root.setCenter(center);
@@ -176,8 +191,7 @@ public class ParentDashboardScreen {
                 AccountType type = savingsRb.isSelected() ? AccountType.SAVINGS : AccountType.CURRENT;
 
                 // Register user + create account
-                AuthService reg = new AuthService();
-                User child = reg.registerUser(name, age, pin, "child");
+                User child = authService.registerUser(name, age, pin, "child");
                 accountService.createAccount(child.getUserId(), type);
                 MainApp.showInfo("Account Created",
                         "✅ Account created for " + name + "!\nThey can now login with their name and PIN.");
@@ -190,7 +204,7 @@ public class ParentDashboardScreen {
 
     private void showDepositDialog() {
         // Pick a child first
-        List<User> children = com.kidsbank.storage.JsonStorage.loadAllUsers().stream()
+        List<User> children = JsonStorage.loadAllUsers().stream()
                 .filter(u -> "child".equals(u.getRole())).toList();
         if (children.isEmpty()) { MainApp.showError("No children registered yet."); return; }
 
@@ -235,23 +249,47 @@ public class ParentDashboardScreen {
     }
 
     private void showSelectAccountForHistory() {
-        List<User> children = com.kidsbank.storage.JsonStorage.loadAllUsers().stream()
+        List<User> kids = JsonStorage.loadAllUsers().stream()
                 .filter(u -> "child".equals(u.getRole())).toList();
-        if (children.isEmpty()) { MainApp.showError("No children registered yet."); return; }
+        if (kids.isEmpty()) { MainApp.showError("No children registered yet."); return; }
 
-        ChoiceDialog<String> cd = new ChoiceDialog<>(children.get(0).getName(),
-                children.stream().map(User::getName).toList());
+        ChoiceDialog<String> cd = new ChoiceDialog<>(kids.get(0).getName(),
+                kids.stream().map(User::getName).toList());
         MainApp.styleDialogPane(cd.getDialogPane());
         cd.setTitle("View History");
         cd.setHeaderText("Select a child to view their transaction history");
         cd.showAndWait().ifPresent(name -> {
-            children.stream().filter(c -> c.getName().equals(name)).findFirst().ifPresent(child -> {
+            kids.stream().filter(c -> c.getName().equals(name)).findFirst().ifPresent(child -> {
                 List<Account> accs = accountService.getAccountsForUser(child.getUserId());
                 if (accs.isEmpty()) { MainApp.showError("No account found."); return; }
                 MainApp.showTransactionHistory(accs.get(0).getAccountId(),
                         child.getName() + "'s " + accs.get(0).getAccountType().getDisplayName());
             });
         });
+    }
+
+    private void showSelectChildForAnalytics() {
+        List<User> kids = JsonStorage.loadAllUsers().stream()
+                .filter(u -> "child".equals(u.getRole())).toList();
+        if (kids.isEmpty()) {
+            MainApp.showError("No children registered yet.");
+            return;
+        }
+
+        ChoiceDialog<String> cd = new ChoiceDialog<>(kids.get(0).getName(),
+                kids.stream().map(User::getName).toList());
+        MainApp.styleDialogPane(cd.getDialogPane());
+        cd.setTitle("Analytics");
+        cd.setHeaderText("Select a child to view charts and summaries");
+        cd.showAndWait().ifPresent(name ->
+            kids.stream().filter(c -> c.getName().equals(name)).findFirst().ifPresent(child -> {
+                List<Account> accs = accountService.getAccountsForUser(child.getUserId());
+                if (accs.isEmpty()) {
+                    MainApp.showError("No account found for this child.");
+                    return;
+                }
+                MainApp.showAnalyticsForChild(accs.get(0).getAccountId(), child.getUserId());
+            }));
     }
 
     private void showRegisterParentDialog() {
@@ -271,12 +309,137 @@ public class ParentDashboardScreen {
             if (bt != ButtonType.OK) return;
             try {
                 if (!pinF.getText().equals(pin2F.getText())) { MainApp.showError("PINs do not match."); return; }
-                new AuthService().registerUser(nameF.getText().trim(), 30, pinF.getText().trim(), "parent");
+                authService.registerUser(nameF.getText().trim(), 30, pinF.getText().trim(), "parent");
                 MainApp.showInfo("Registered", "Parent account created successfully!");
             } catch (Exception ex) {
                 MainApp.showError(ex.getMessage());
             }
         });
+    }
+
+    private void showApplyInterestDialog() {
+        List<SavingsPick> picks = new ArrayList<>();
+        for (User c : JsonStorage.loadAllUsers().stream()
+                .filter(u -> "child".equals(u.getRole())).toList()) {
+            for (Account a : accountService.getAccountsForUser(c.getUserId())) {
+                if (a.getAccountType() == AccountType.SAVINGS) {
+                    picks.add(new SavingsPick(c, a));
+                }
+            }
+        }
+        if (picks.isEmpty()) {
+            MainApp.showError("No savings accounts found. Create a child with a savings account first.");
+            return;
+        }
+
+        Dialog<ButtonType> d = new Dialog<>();
+        MainApp.styleDialogPane(d.getDialogPane());
+        d.setTitle("Apply Interest");
+        d.setHeaderText("Add monthly interest to a child's savings balance");
+
+        ComboBox<SavingsPick> cb = new ComboBox<>();
+        cb.getItems().addAll(picks);
+        cb.getSelectionModel().selectFirst();
+        cb.setConverter(new javafx.util.StringConverter<>() {
+            @Override public String toString(SavingsPick object) {
+                return object == null ? "" : object.label();
+            }
+            @Override public SavingsPick fromString(String string) { return null; }
+        });
+
+        TextField rateF = new TextField("2.0");
+        rateF.setPromptText("Annual-style % for this allowance (e.g. 2.0)");
+
+        VBox content = new VBox(10,
+                new Label("Child / Savings account:"), cb,
+                new Label("Interest rate (%):"), rateF);
+        content.setPadding(new Insets(10));
+        d.getDialogPane().setContent(content);
+        d.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        d.showAndWait().ifPresent(bt -> {
+            if (bt != ButtonType.OK) return;
+            try {
+                SavingsPick pick = cb.getSelectionModel().getSelectedItem();
+                if (pick == null) return;
+                double rate = Double.parseDouble(rateF.getText().trim());
+                var tx = accountService.applyMonthlyInterest(pick.account().getAccountId(), rate);
+                MainApp.showInfo("Interest Applied",
+                        "Interest of $" + String.format("%.2f", tx.getAmount())
+                                + " applied to " + pick.child().getName() + "'s savings account.");
+                MainApp.showParentDashboard();
+            } catch (Exception ex) {
+                MainApp.showError(ex.getMessage());
+            }
+        });
+    }
+
+    private void showSpendingLimitDialog() {
+        List<AcctPick> picks = new ArrayList<>();
+        for (User c : JsonStorage.loadAllUsers().stream()
+                .filter(u -> "child".equals(u.getRole())).toList()) {
+            for (Account a : accountService.getAccountsForUser(c.getUserId())) {
+                picks.add(new AcctPick(c, a));
+            }
+        }
+        if (picks.isEmpty()) {
+            MainApp.showError("No child accounts yet.");
+            return;
+        }
+
+        Dialog<ButtonType> d = new Dialog<>();
+        MainApp.styleDialogPane(d.getDialogPane());
+        d.setTitle("Weekly Spending Limit");
+        d.setHeaderText("Set the maximum withdrawals allowed per rolling week");
+
+        ComboBox<AcctPick> cb = new ComboBox<>();
+        cb.getItems().addAll(picks);
+        cb.getSelectionModel().selectFirst();
+        cb.setConverter(new javafx.util.StringConverter<>() {
+            @Override public String toString(AcctPick object) {
+                return object == null ? "" : object.label();
+            }
+            @Override public AcctPick fromString(String string) { return null; }
+        });
+
+        TextField limitF = new TextField();
+        limitF.setPromptText("Weekly limit ($), 0 = no limit");
+
+        VBox content = new VBox(10,
+                new Label("Account:"), cb,
+                new Label("Weekly limit ($):"), limitF);
+        content.setPadding(new Insets(10));
+        d.getDialogPane().setContent(content);
+        d.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        d.showAndWait().ifPresent(bt -> {
+            if (bt != ButtonType.OK) return;
+            try {
+                AcctPick pick = cb.getSelectionModel().getSelectedItem();
+                if (pick == null) return;
+                double lim = Double.parseDouble(limitF.getText().trim());
+                accountService.setSpendingLimitForAccount(pick.account().getAccountId(), lim);
+                MainApp.showInfo("Limit Saved",
+                        "Weekly spending limit set to $" + String.format("%.2f", lim)
+                                + " for " + pick.child().getName() + ".");
+                MainApp.showParentDashboard();
+            } catch (Exception ex) {
+                MainApp.showError(ex.getMessage());
+            }
+        });
+    }
+
+    private record SavingsPick(User child, Account account) {
+        String label() {
+            return child.getName() + " — " + account.getAccountType().getDisplayName()
+                    + "  ($" + String.format("%.2f", account.getBalance()) + ")";
+        }
+    }
+
+    private record AcctPick(User child, Account account) {
+        String label() {
+            return child.getName() + " — " + account.getAccountType().getDisplayName();
+        }
     }
 
     public BorderPane getRoot() { return root; }

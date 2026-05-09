@@ -1,10 +1,32 @@
-[{
-  "childUserId": "b4eaa1eb-1508-4bfb-9f6b-c484213e2630",
-  "dueDate": "2026-04-20",
-  "parentUserId": "7ed7850d-b9be-43ec-80f9-fccce8e53bed",
-  "description": "100 ta",
-  "rewardAmount": 10,
-  "title": "Soz yodla",
-  "taskId": "06161f4a-790e-4634-8d9e-ecf549e8d5cb",
-  "status": "APPROVED"
-}]
+[
+  {
+    "childUserId": "b4eaa1eb-1508-4bfb-9f6b-c484213e2630",
+    "dueDate": "2026-04-20",
+    "parentUserId": "7ed7850d-b9be-43ec-80f9-fccce8e53bed",
+    "description": "100 ta",
+    "rewardAmount": 10,
+    "title": "Soz yodla",
+    "taskId": "06161f4a-790e-4634-8d9e-ecf549e8d5cb",
+    "status": "APPROVED"
+  },
+  {
+    "childUserId": "b4eaa1eb-1508-4bfb-9f6b-c484213e2630",
+    "dueDate": "2026-04-23",
+    "parentUserId": "7ed7850d-b9be-43ec-80f9-fccce8e53bed",
+    "description": "clear",
+    "rewardAmount": 10,
+    "title": "Wash car",
+    "taskId": "dadffb9a-519a-4cc9-bd27-f87c0817bcbb",
+    "status": "APPROVED"
+  },
+  {
+    "childUserId": "b4eaa1eb-1508-4bfb-9f6b-c484213e2630",
+    "dueDate": "2026-04-29",
+    "parentUserId": "7ed7850d-b9be-43ec-80f9-fccce8e53bed",
+    "description": "",
+    "rewardAmount": 5,
+    "title": "wash dishes",
+    "taskId": "371c6821-6ca1-42af-9229-79ed00c66be6",
+    "status": "COMPLETED"
+  }
+]

@@ -117,6 +117,7 @@ public class JsonStorage {
         obj.put("accountType", account.getAccountType().name());
         obj.put("balance", account.getBalance());
         obj.put("createdDate", account.getCreatedDate().toString());
+        obj.put("spendingLimit", account.getSpendingLimit());
         updated.put(obj);
         writeArray("accounts", updated);
     }
@@ -130,7 +131,8 @@ public class JsonStorage {
                 o.getString("accountId"), o.getString("userId"),
                 AccountType.valueOf(o.getString("accountType")),
                 o.getDouble("balance"),
-                LocalDate.parse(o.getString("createdDate"))
+                LocalDate.parse(o.getString("createdDate")),
+                o.optDouble("spendingLimit", 0.0)
             ));
         }
         return accounts;
@@ -203,6 +205,7 @@ public class JsonStorage {
         obj.put("rewardAmount", task.getRewardAmount());
         obj.put("dueDate", task.getDueDate() != null ? task.getDueDate().toString() : "");
         obj.put("status", task.getStatus().name());
+        obj.put("approvedAt", task.getApprovedAt() != null ? task.getApprovedAt().toString() : "");
         updated.put(obj);
         writeArray("tasks", updated);
     }
@@ -214,11 +217,14 @@ public class JsonStorage {
             JSONObject o = arr.getJSONObject(i);
             String dueDateStr = o.getString("dueDate");
             LocalDate dueDate = dueDateStr.isEmpty() ? null : LocalDate.parse(dueDateStr);
+            String approvedStr = o.optString("approvedAt", "");
+            LocalDateTime approvedAt = approvedStr.isEmpty() ? null : LocalDateTime.parse(approvedStr);
             tasks.add(new Task(
                 o.getString("taskId"), o.getString("parentUserId"),
                 o.getString("childUserId"), o.getString("title"),
                 o.getString("description"), o.getDouble("rewardAmount"),
-                dueDate, TaskStatus.valueOf(o.getString("status"))
+                dueDate, TaskStatus.valueOf(o.getString("status")),
+                approvedAt
             ));
         }
         return tasks;

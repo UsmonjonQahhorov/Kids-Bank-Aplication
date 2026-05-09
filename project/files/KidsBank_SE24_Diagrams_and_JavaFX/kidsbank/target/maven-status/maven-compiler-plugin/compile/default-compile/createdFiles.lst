@@ -5,8 +5,12 @@ com/kidsbank/TransactionScreen$1.class
 com/kidsbank/model/SavingsGoal.class
 com/kidsbank/TaskScreen.class
 com/kidsbank/service/AccountService.class
+com/kidsbank/AnalyticsScreen$1.class
+com/kidsbank/ParentDashboardScreen$SavingsPick.class
 com/kidsbank/ParentDashboardScreen.class
+com/kidsbank/AnalyticsScreen.class
 com/kidsbank/TransactionScreen.class
+com/kidsbank/ParentDashboardScreen$2.class
 com/kidsbank/service/AuthService$LoginResult.class
 com/kidsbank/model/Account.class
 com/kidsbank/LoginScreen.class
@@ -17,8 +21,11 @@ com/kidsbank/model/User.class
 com/kidsbank/model/Task.class
 com/kidsbank/TaskScreen$1.class
 com/kidsbank/service/TaskService.class
+com/kidsbank/ParentDashboardScreen$1.class
 com/kidsbank/model/TaskStatus.class
 com/kidsbank/MainApp.class
+com/kidsbank/ParentDashboardScreen$AcctPick.class
 com/kidsbank/storage/JsonStorage.class
 com/kidsbank/model/TransactionType.class
+com/kidsbank/ChildProfileScreen.class
 com/kidsbank/service/SavingsGoalService.class

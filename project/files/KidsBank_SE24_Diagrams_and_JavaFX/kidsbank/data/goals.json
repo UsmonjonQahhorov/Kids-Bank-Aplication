@@ -14,7 +14,25 @@
     "targetAmount": 40,
     "targetDate": "2027-04-14",
     "goalName": "New Headphones",
+    "completed": true,
+    "savedAmount": 40
+  },
+  {
+    "accountId": "c2b84284-c658-4bc4-abe9-6975f3c298c0",
+    "goalId": "8ae92fa8-064d-4f05-a772-682ba866e58b",
+    "targetAmount": 200,
+    "targetDate": "2026-05-30",
+    "goalName": "phone",
     "completed": false,
-    "savedAmount": 10
+    "savedAmount": 0
+  },
+  {
+    "accountId": "c2b84284-c658-4bc4-abe9-6975f3c298c0",
+    "goalId": "8e62d0bc-152f-4989-a3ed-3e1b66619f1e",
+    "targetAmount": 200,
+    "targetDate": "2026-04-30",
+    "goalName": "phone",
+    "completed": false,
+    "savedAmount": 35
   }
 ]

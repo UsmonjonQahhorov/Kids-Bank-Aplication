@@ -22,6 +22,7 @@
 
     <dependencies>
         <!-- JavaFX -->
+        <!-- BarChart / PieChart / LineChart live in javafx-controls (no separate javafx-charts artifact on Central). -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>

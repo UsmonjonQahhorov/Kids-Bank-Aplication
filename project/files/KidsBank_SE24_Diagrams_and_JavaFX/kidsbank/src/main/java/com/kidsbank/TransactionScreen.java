@@ -3,6 +3,7 @@ package com.kidsbank;
 import com.kidsbank.model.Transaction;
 import com.kidsbank.model.TransactionType;
 import com.kidsbank.service.AccountService;
+import com.kidsbank.service.AuthService;
 import javafx.geometry.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class TransactionScreen {
 
     private final AccountService accountService;
+    private final AuthService authService;
     private final String accountId;
     private final String accountName;
     private BorderPane root;
@@ -28,8 +30,10 @@ public class TransactionScreen {
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd MMM yyyy  HH:mm");
 
-    public TransactionScreen(AccountService accountService, String accountId, String accountName) {
+    public TransactionScreen(AccountService accountService, AuthService authService,
+                             String accountId, String accountName) {
         this.accountService = accountService;
+        this.authService    = authService;
         this.accountId      = accountId;
         this.accountName    = accountName;
         buildUI();
@@ -52,7 +56,13 @@ public class TransactionScreen {
         Button backBtn = new Button("← Back");
         backBtn.setStyle("-fx-background-color:#2E75B6; -fx-text-fill:white; "
                 + "-fx-font-weight:bold; -fx-background-radius:5;");
-        backBtn.setOnAction(e -> MainApp.showLoginScreen()); // simplified back
+        backBtn.setOnAction(e -> {
+            var u = authService.getCurrentUser();
+            if (u != null && "child".equalsIgnoreCase(u.getRole()))
+                MainApp.showChildDashboard();
+            else
+                MainApp.showParentDashboard();
+        });
         header.getChildren().addAll(hLbl, sp, backBtn);
 
         // Filter bar

@@ -1,12 +1,14 @@
 package com.kidsbank.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
  * Represents a task created by a parent for a child to complete and earn money.
  * Group SE-24 - Virtual Bank for Kids
  */
+
 public class Task {
     private String taskId;
     private String parentUserId;
@@ -16,6 +18,8 @@ public class Task {
     private double rewardAmount;
     private LocalDate dueDate;   // nullable
     private TaskStatus status;
+    /** Set when task is APPROVED; used for streak analytics. */
+    private LocalDateTime approvedAt;
 
     /** Constructor for creating a new task. */
     public Task(String parentUserId, String childUserId, String title,
@@ -28,11 +32,13 @@ public class Task {
         this.rewardAmount = rewardAmount;
         this.dueDate = dueDate;
         this.status = TaskStatus.PENDING;
+        this.approvedAt = null;
     }
 
     /** Constructor for loading from file. */
     public Task(String taskId, String parentUserId, String childUserId, String title,
-                String description, double rewardAmount, LocalDate dueDate, TaskStatus status) {
+                String description, double rewardAmount, LocalDate dueDate, TaskStatus status,
+                LocalDateTime approvedAt) {
         this.taskId = taskId;
         this.parentUserId = parentUserId;
         this.childUserId = childUserId;
@@ -41,6 +47,7 @@ public class Task {
         this.rewardAmount = rewardAmount;
         this.dueDate = dueDate;
         this.status = status;
+        this.approvedAt = approvedAt;
     }
 
     // Getters & setters
@@ -53,6 +60,8 @@ public class Task {
     public LocalDate getDueDate() { return dueDate; }
     public TaskStatus getStatus() { return status; }
     public void setStatus(TaskStatus status) { this.status = status; }
+    public LocalDateTime getApprovedAt() { return approvedAt; }
+    public void setApprovedAt(LocalDateTime approvedAt) { this.approvedAt = approvedAt; }
 
     @Override
     public String toString() {

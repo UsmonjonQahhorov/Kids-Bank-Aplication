@@ -43,5 +43,68 @@
     "balanceAfter": 80,
     "type": "SAVINGS_TRANSFER",
     "transactionId": "ea23b785-2cf8-405c-816d-b28d02cecada"
+  },
+  {
+    "dateTime": "2026-04-22T16:16:13.977932549",
+    "accountId": "c2b84284-c658-4bc4-abe9-6975f3c298c0",
+    "amount": 10,
+    "description": "Task Reward: Wash car",
+    "balanceAfter": 15,
+    "type": "TASK_REWARD",
+    "transactionId": "e2d0a8d5-2a31-4676-a8e9-3f46a2aa35bb"
+  },
+  {
+    "dateTime": "2026-04-28T10:13:34.342464544",
+    "accountId": "afe62b67-a70f-4b8e-a508-9e073b46f21d",
+    "amount": 30,
+    "description": "Savings: New Headphones",
+    "balanceAfter": 50,
+    "type": "SAVINGS_TRANSFER",
+    "transactionId": "0017208f-fc65-43f4-ba1c-c857b8f058f4"
+  },
+  {
+    "dateTime": "2026-04-28T11:30:09.340984527",
+    "accountId": "c2b84284-c658-4bc4-abe9-6975f3c298c0",
+    "amount": 10,
+    "description": "mashina yuvish",
+    "balanceAfter": 25,
+    "type": "DEPOSIT",
+    "transactionId": "5d383451-5192-41a4-b77c-e8d556e8bbf6"
+  },
+  {
+    "dateTime": "2026-04-28T11:32:07.939240845",
+    "accountId": "c2b84284-c658-4bc4-abe9-6975f3c298c0",
+    "amount": 5,
+    "description": "Savings: phone",
+    "balanceAfter": 20,
+    "type": "SAVINGS_TRANSFER",
+    "transactionId": "2cfe9ca5-f9fb-42b6-894c-5f2d619f61d1"
+  },
+  {
+    "dateTime": "2026-04-28T11:34:27.159692625",
+    "accountId": "c2b84284-c658-4bc4-abe9-6975f3c298c0",
+    "amount": 200,
+    "description": "For 1 month living",
+    "balanceAfter": 220,
+    "type": "DEPOSIT",
+    "transactionId": "b1763815-976e-45e5-a5f9-1e3abddb838c"
+  },
+  {
+    "dateTime": "2026-04-30T17:02:12.677080255",
+    "accountId": "c2b84284-c658-4bc4-abe9-6975f3c298c0",
+    "amount": 30,
+    "description": "Savings: phone",
+    "balanceAfter": 190,
+    "type": "SAVINGS_TRANSFER",
+    "transactionId": "1bcd8c28-fcef-4592-ad74-c7ef5abb2485"
+  },
+  {
+    "dateTime": "2026-05-09T15:52:56.809998822",
+    "accountId": "afe62b67-a70f-4b8e-a508-9e073b46f21d",
+    "amount": 1,
+    "description": "Monthly Interest @ 2.00%",
+    "balanceAfter": 51,
+    "type": "DEPOSIT",
+    "transactionId": "7b15b677-e1fc-4c05-af7c-e1b5218f0149"
   }
 ]

@@ -4,8 +4,11 @@ import com.kidsbank.model.*;
 import com.kidsbank.storage.JsonStorage;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 /**
  * Business logic for task management.
@@ -59,6 +62,7 @@ public class TaskService {
         if (task.getStatus() != TaskStatus.COMPLETED)
             throw new IllegalStateException("Only completed tasks can be approved.");
         task.setStatus(TaskStatus.APPROVED);
+        task.setApprovedAt(LocalDateTime.now());
         JsonStorage.saveTask(task);
         accountService.creditTaskReward(accountId, task.getRewardAmount(), task.getTitle());
     }
@@ -77,5 +81,34 @@ public class TaskService {
             .filter(t -> t.getTaskId().equals(taskId))
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Task not found: " + taskId));
+    }
+
+    /**
+     * Days in a row (ending today or yesterday) with at least one approved task.
+     */
+    public int getCompletionStreak(String childUserId) {
+        List<Task> approved = JsonStorage.findTasksByChildId(childUserId).stream()
+                .filter(t -> t.getStatus() == TaskStatus.APPROVED && t.getApprovedAt() != null)
+                .sorted(Comparator.comparing(Task::getApprovedAt).reversed())
+                .toList();
+
+        if (approved.isEmpty()) return 0;
+
+        Set<LocalDate> days = new HashSet<>();
+        for (Task t : approved) {
+            days.add(t.getApprovedAt().toLocalDate());
+        }
+
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+        if (!days.contains(today) && !days.contains(yesterday)) return 0;
+
+        LocalDate d = days.contains(today) ? today : yesterday;
+        int streak = 0;
+        while (days.contains(d)) {
+            streak++;
+            d = d.minusDays(1);
+        }
+        return streak;
     }
 }

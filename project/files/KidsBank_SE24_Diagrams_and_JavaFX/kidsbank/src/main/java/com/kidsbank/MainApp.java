@@ -1,5 +1,6 @@
 package com.kidsbank;
 
+import com.kidsbank.model.User;
 import com.kidsbank.service.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -87,12 +88,60 @@ public class MainApp extends Application {
     public static void showParentDashboard() {
         ParentDashboardScreen screen = new ParentDashboardScreen(
                 authService, accountService, taskService);
-        setThemedScene(screen.getRoot(), 700, 580);
+        setThemedScene(screen.getRoot(), 760, 700);
         primaryStage.setTitle("KidsBank - Parent Dashboard");
     }
 
+    /** Analytics for the logged-in child (current account). */
+    public static void showAnalytics(String accountId) {
+        try {
+            User u = authService.getCurrentUser();
+            if (u == null || !"child".equalsIgnoreCase(u.getRole())) {
+                showError("Open analytics from a child login.");
+                return;
+            }
+            AnalyticsScreen screen = new AnalyticsScreen(
+                    accountService, taskService, goalService, accountId, u.getUserId(), false);
+            setThemedScene(screen.getRoot(), 920, 720);
+            primaryStage.setTitle("KidsBank - Analytics");
+        } catch (Exception e) {
+            showError(e.getMessage());
+        }
+    }
+
+    /**
+     * Parent views analytics for a child's account; Back returns to the parent dashboard.
+     */
+    public static void showAnalyticsForChild(String accountId, String childUserId) {
+        try {
+            User u = authService.getCurrentUser();
+            if (u == null || !"parent".equalsIgnoreCase(u.getRole())) {
+                showError("Only a parent can open this view.");
+                return;
+            }
+            AnalyticsScreen screen = new AnalyticsScreen(
+                    accountService, taskService, goalService, accountId, childUserId, true);
+            setThemedScene(screen.getRoot(), 920, 720);
+            primaryStage.setTitle("KidsBank - Child Analytics");
+        } catch (Exception e) {
+            showError(e.getMessage());
+        }
+    }
+
+    public static void showChildProfiles() {
+        try {
+            ChildProfileScreen screen = new ChildProfileScreen(
+                    authService, accountService, taskService, goalService);
+            setThemedScene(screen.getRoot(), 720, 600);
+            primaryStage.setTitle("KidsBank - Children");
+        } catch (Exception e) {
+            showError(e.getMessage());
+        }
+    }
+
     public static void showTransactionHistory(String accountId, String accountName) {
-        TransactionScreen screen = new TransactionScreen(accountService, accountId, accountName);
+        TransactionScreen screen = new TransactionScreen(
+                accountService, authService, accountId, accountName);
         setThemedScene(screen.getRoot(), 700, 560);
         primaryStage.setTitle("KidsBank - Transaction History");
     }
